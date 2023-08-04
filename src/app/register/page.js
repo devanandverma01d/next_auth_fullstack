@@ -1,26 +1,55 @@
 'use client'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+import {useRouter} from 'next/navigation'
 import React, { useState } from 'react'
 
 const Register = () => {
+  {/* Hooks */}
+  const router = useRouter()
   {/*All states */}
   const[name,setName]=useState('')
   const[email, setEmail]=useState('')
   const[password, setPassword]=useState('')
 
   {/*handleRegister */}
-  const handleRegister=(e)=>{
-    e.preventDefault()
-    console.log('handleRegisterData--> Name:',name , "Email:", email, "Password:", password)
-    const res = fetch('api/register',{
-      method:'POST',
-      headers:{
-        'Content-Type':'Application/json',
-      },
-      body:JSON.stringify({name,email,password})
-    })
-    console.log("Res-->",res.data)
-  } 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+  
+    console.log('handleRegisterData--> Name:', name, "Email:", email, "Password:", password);
+  
+    try {
+      const response = await fetch('api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+  
+      // Check if the response status is successful (2xx range)
+      console.log(response)
+      if (response.ok) {
+        // Get the response data as JSON
+        const responseData = await response.json();
+        console.log("Response Data -->", responseData);
 
+      } else {
+        // If the response status is not successful, handle the error
+        // You can parse the response text to see the error message sent by the server
+        const errorResponse = await response.text();
+        console.error("Error occurred while registering:", errorResponse);
+      }
+    } catch (error) {
+      console.error("Error occurred while registering:", error);
+   
+    }
+    alert("registration done successfully")
+    router.push('/login')
+
+  }
+
+  
   {/*Return  */}
   return (
    <div style={{marginTop:'50px',padding:'20px',width:'50%',marginLeft:'150px'}}>
